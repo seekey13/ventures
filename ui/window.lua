@@ -19,7 +19,20 @@ function ui:draw(ventures)
     -- Set window title
     local window_title = window:get_title(highest.completion, highest.area, highest.position);
 
-    imgui.SetNextWindowSize(window.size, ImGuiCond_FirstUseEver);
+    -- Calculate window height based on content
+    local line_height = imgui.GetTextLineHeightWithSpacing();
+    local separator_height = 8; -- Approximate height of separator
+    local padding = 40; -- Window padding (title bar + frame)
+    local num_ventures = ventures and #ventures or 0;
+    
+    -- Content: Header row (1 line) + Separator + Venture rows (1 line per venture)
+    local calculated_height = padding + line_height + separator_height + (num_ventures * line_height);
+    
+    -- Set window size constraints (width adjustable, height fixed to content)
+    local min_width = 600;
+    local max_width = 900;
+    imgui.SetNextWindowSizeConstraints({ min_width, calculated_height }, { max_width, calculated_height });
+
     local open = { config.get('show_gui') };
     if imgui.Begin(window_title, open) then
         -- Set window styles
